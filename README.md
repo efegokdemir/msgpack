@@ -22,6 +22,23 @@
 
 See [CHANGELOG.md](CHANGELOG.md) for full details and the [v6.0.0 release](https://github.com/Basekick-Labs/msgpack/releases/tag/v6.0.0).
 
+## Version migration notes
+
+### Migrating from v5 to v6
+
+- Update the module and import path from `github.com/vmihailenco/msgpack/v5` to `github.com/Basekick-Labs/msgpack/v6`.
+- v6 includes the performance and safety changes listed in the [v6 changelog](CHANGELOG.md#v600-basekick-labs-fork), including pooled encoding, `MarshalAppend`, byte-slice decoding fast paths, and allocation limits.
+- Review the map-decoding change before upgrading: decoding into a non-nil `map[string]interface{}` now reuses and merges into that map instead of replacing it. Pass a nil map to retain replacement semantics.
+- v6 adds `SetPoolBufferLimit` for applications that need to tune pooled buffer retention and requires Go 1.25 or newer.
+
+### Migrating from v4 to v5
+
+- `Encode`, `Decode`, `Marshal`, and `Unmarshal` changed to take one argument; use `EncodeMulti` and `DecodeMulti` for multiple values.
+- Typed integer methods and the extensions API were added.
+- `SetMapDecodeFunc` became `SetMapDecoder`, `StructAsArray` became `UseArrayEncodedStructs`, and `SortMapKeys` became `SetSortMapKeys`.
+- `UseJSONTag` was removed; use `SetCustomStructTag("json")` instead.
+- Numeric encoding became type-preserving by default; use the compact-integer option when the older compact behavior is required.
+
 ## Resources
 
 - [Discord](https://discord.gg/nxnWfUxsdm)
