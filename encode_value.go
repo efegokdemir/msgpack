@@ -230,12 +230,21 @@ func marshalBinaryValue(e *Encoder, v reflect.Value) error {
 //------------------------------------------------------------------------------
 
 func marshalTextValueAddr(e *Encoder, v reflect.Value) error {
+	if e.flags&disableTextMarshalerFlag != 0 {
+		return valueEncoders[v.Kind()](e, v)
+	}
 	return marshalTextValue(e, ensureAddr(v))
 }
 
 func marshalTextValue(e *Encoder, v reflect.Value) error {
 	if nilable(v.Kind()) && v.IsNil() {
 		return e.EncodeNil()
+	}
+	if e.flags&disableTextMarshalerFlag != 0 {
+		if v.Kind() == reflect.Ptr {
+			return valueEncoders[v.Elem().Kind()](e, v.Elem())
+		}
+		return valueEncoders[v.Kind()](e, v)
 	}
 
 	marshaler := v.Interface().(encoding.TextMarshaler)

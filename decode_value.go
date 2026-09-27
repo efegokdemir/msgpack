@@ -274,7 +274,7 @@ func unmarshalBinaryOrTextValue(d *Decoder, v reflect.Value) error {
 	if err != nil {
 		return err
 	}
-	if msgpcode.IsString(c) {
+	if msgpcode.IsString(c) && d.flags&disableTextUnmarshalerFlag == 0 {
 		return unmarshalTextValue(d, v)
 	}
 	return unmarshalBinaryValue(d, v)
@@ -291,6 +291,15 @@ func unmarshalBinaryValue(d *Decoder, v reflect.Value) error {
 }
 
 func unmarshalTextValue(d *Decoder, v reflect.Value) error {
+	if d.flags&disableTextUnmarshalerFlag != 0 {
+		if v.Kind() == reflect.Ptr {
+			if v.IsNil() {
+				v.Set(reflect.New(v.Type().Elem()))
+			}
+			return valueDecoders[v.Elem().Kind()](d, v.Elem())
+		}
+		return valueDecoders[v.Kind()](d, v)
+	}
 	data, err := d.DecodeBytes()
 	if err != nil {
 		return err
