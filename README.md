@@ -33,11 +33,12 @@ See [CHANGELOG.md](CHANGELOG.md) for full details and the [v6.0.0 release](https
 
 ### Migrating from v4 to v5
 
-- `Encode`, `Decode`, `Marshal`, and `Unmarshal` changed to take one argument; use `EncodeMulti` and `DecodeMulti` for multiple values.
-- Typed integer methods and the extensions API were added.
-- `SetMapDecodeFunc` became `SetMapDecoder`, `StructAsArray` became `UseArrayEncodedStructs`, and `SortMapKeys` became `SetSortMapKeys`.
+- Update the module path from `github.com/vmihailenco/msgpack/v4` to `github.com/vmihailenco/msgpack/v5`.
+- `Encode` and `Decode` process one value per call; use `EncodeMulti` and `DecodeMulti` for multiple values. `Marshal` takes one value, while `Unmarshal` takes the encoded data and destination in both versions.
+- `SetDecodeMapFunc` was renamed `SetMapDecoder`, `StructAsArray` became `UseArrayEncodedStructs`, and `SortMapKeys` became `SetSortMapKeys`.
+- `UseCompactEncoding` was renamed `UseCompactInts`; it enables compact integer encoding.
+- `RegisterExt` now requires a type implementing both `Marshaler` and `Unmarshaler`; use `RegisterExtEncoder` and `RegisterExtDecoder` for custom codecs.
 - `UseJSONTag` was removed; use `SetCustomStructTag("json")` instead.
-- Numeric encoding became type-preserving by default; use the compact-integer option when the older compact behavior is required.
 
 ## Resources
 
