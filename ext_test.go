@@ -177,3 +177,13 @@ func TestMarshalReflectValueInInterfaceMap(t *testing.T) {
 	_, err := msgpack.Marshal(map[string]interface{}{"value": reflect.ValueOf("text")})
 	require.EqualError(t, err, "msgpack: Encode(unsupported reflect.Value)")
 }
+
+func TestMarshalStructWithReflectValueInInterfaceMap(t *testing.T) {
+	type data struct {
+		A interface{} `json:"a"`
+	}
+	key := 1
+	input := &data{A: map[string]interface{}{"key": reflect.ValueOf(&key)}}
+	_, err := msgpack.Marshal(input)
+	require.EqualError(t, err, "msgpack: Encode(unsupported reflect.Value)")
+}
